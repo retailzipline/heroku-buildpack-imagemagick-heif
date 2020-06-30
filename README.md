@@ -3,9 +3,9 @@ heroku-buildpack-imagemagick-heif
 
 The rise in popularity and use of HEIF/HEIC(High Efficency Image Format) means your project's image processing also needs to be able to handle this format. The current default version of imagemagick installed on heroku:16 dynos is 6.8.9.9 and does not support processing heic image files. This [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) vendors a version of ImageMagick with HEIF support binaries into your project. It is based on https://github.com/retailzipline/heroku-buildpack-imagemagick-heif.
 
-The orginal buildpack was created for `heroku-18` stacks but this one was modified to work with [Heroku stack:](https://devcenter.heroku.com/articles/stack) `heroku-16`. 
+The orginal buildpack was created for `heroku-18` stacks but this one was modified to work with [Heroku stack:](https://devcenter.heroku.com/articles/stack) `heroku-16`.
 
-The tar file in the [/build folder](./build) currently contains: 
+The tar file in the [/build folder](./build) currently contains:
 
 Version: ImageMagick 7.0.9-22 Q16 x86_64 2020-02-10 https://imagemagick.org
 
@@ -41,14 +41,14 @@ Prerequisites
 Steps:
 
 1. Spin up a docker container with the heroku:16 stack. This will build and behave exactly the same way a heroku:16 dyno except you will have write access. (make sure docker is running on your machine). From command line:
- 
+
      ```bash
      $ docker run --rm -it heroku/heroku:16-build
      ```
- 
+
 _This will take you to an interactive bash shell as a root user inside the container. The `--rm` flag removes the docker process on exiting.  The `-ti` flag creates the interactive bash shell._
- 
- 
+
+
 2. Get the libraries and dependencies you need(some of these already exist on the system):
 
      ```bash
@@ -88,7 +88,7 @@ _This will take you to an interactive bash shell as a root user inside the conta
     $ wget https://www.imagemagick.org/download/ImageMagick.tar.gz
     $ tar xf ImageMagick.tar.gz
     $ cd ImageMagick-7* #(This might be 8 at some point?)
-    $ ./configure --with-heic=yes --prefix=/usr/src/imagemagick --without-gvc
+    $ ./configure --with-mpeg=yes --with-mpg=yes --with-heic=yes --prefix=/usr/src/imagemagick --without-gvc
     $ make && make install
     ```
 
@@ -122,22 +122,22 @@ _The last 2 libraries are not available at run time on heroku only build time se
     ```bash
     $ cd /usr/src/imagemagick
     $ rm -rf build
-    $ tar czf /usr/src/imagemagick/build/imagemagick.tar.gz bin include lib
+    $ tar czf /usr/src/imagemagick/imagemagick.tar.gz bin include lib
     ```
 
 
 10. Copy the compressed file/tarball from the docker container into the repo(_you need to have cloned this repo locally_):
- 
+
     ```bash
     # List current running docker processes to find out the NAME of your container
     $ docker ps
     # copy the binary from the container to the build directory in the repo on your local machine
-    $ cp <NAME_of_docker_container>:/usr/src/imagemagick.tar.gz <path_to_build_folder_in_git_repo>
+    $ docker cp <NAME_of_docker_container>:/usr/src/imagemagick.tar.gz <path_to_build_folder_in_git_repo>
     ```
-     
+
 
 **DO NOT EXIT YOUR CONTAINER or ALL will be lost, open a new tab in your terminal**
- 
+
 _You may need to delete the old tarball from the bin folder first or to be safe copy the file from the container to your local machine before adding to the repo so you have a copy of the old binary tarball._
 
 
